@@ -178,7 +178,9 @@ class VideoContentView extends StatelessWidget {
             child: SizedBox(
               width: width,
               height: height,
-              child: VideoPlayer(playerController!),
+              child: AspectRatio(
+                  aspectRatio: playerController!.value.aspectRatio,
+                  child: VideoPlayer(playerController!)),
             ),
           );
         },
