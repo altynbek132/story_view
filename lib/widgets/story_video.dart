@@ -139,10 +139,6 @@ class StoryVideoState extends State<StoryVideo> {
   }
 }
 
-/**
- * @name VideoContentView
- * @description Stateless widget that shows a video player or loading/error widgets based on video loading state.
- */
 class VideoContentView extends StatelessWidget {
   final LoadState videoLoadState;
   final VideoPlayerController? playerController;
@@ -162,15 +158,30 @@ class VideoContentView extends StatelessWidget {
     if (videoLoadState == LoadState.success &&
         playerController != null &&
         playerController!.value.isInitialized) {
-      return Center(
-        child: FittedBox(
-          fit: BoxFit.cover,
-          child: SizedBox(
-            width: playerController!.value.size.width,
-            height: playerController!.value.size.height,
-            child: VideoPlayer(playerController!),
-          ),
-        ),
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final videoAspectRatio = playerController!.value.aspectRatio;
+          final screenAspectRatio =
+              constraints.maxWidth / constraints.maxHeight;
+
+          double width, height;
+
+          if (videoAspectRatio > screenAspectRatio) {
+            height = constraints.maxHeight;
+            width = height * videoAspectRatio;
+          } else {
+            width = constraints.maxWidth;
+            height = width / videoAspectRatio;
+          }
+
+          return Center(
+            child: SizedBox(
+              width: width,
+              height: height,
+              child: VideoPlayer(playerController!),
+            ),
+          );
+        },
       );
     }
 
